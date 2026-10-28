@@ -1,0 +1,451 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/danielacolmenares/arianna-malattie-rare/docs/scheda_patologia.schema.json",
+  "title": "Arianna – Scheda patologia",
+  "description": "Schema preliminare per importazione, validazione e indicizzazione delle schede patologia.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "slug",
+    "nome_ufficiale",
+    "sinonimi",
+    "codici",
+    "classificazioni",
+    "unita_operative",
+    "percorso_accesso",
+    "fonti",
+    "workflow",
+    "qualita"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^PAT-[A-Z0-9-]+$",
+      "description": "Identificatore interno stabile."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "nome_ufficiale": {
+      "type": "string",
+      "minLength": 2
+    },
+    "descrizione_breve": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sinonimi": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sinonimo"
+      },
+      "uniqueItems": true
+    },
+    "termini_colloquiali": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "parole_chiave": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "codici": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/codice"
+      },
+      "uniqueItems": true
+    },
+    "classificazioni": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/classificazione"
+      },
+      "uniqueItems": true
+    },
+    "unita_operative": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/unita_operativa"
+      }
+    },
+    "percorso_accesso": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/percorso_accesso"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fonti": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/fonte"
+      }
+    },
+    "workflow": {
+      "$ref": "#/$defs/workflow"
+    },
+    "qualita": {
+      "$ref": "#/$defs/qualita"
+    }
+  },
+  "$defs": {
+    "sinonimo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valore",
+        "tipo",
+        "fonte"
+      ],
+      "properties": {
+        "valore": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo": {
+          "enum": [
+            "denominazione_alternativa",
+            "sinonimo_clinico",
+            "acronimo",
+            "termine_colloquiale"
+          ]
+        },
+        "fonte": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificato": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "codice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sistema",
+        "valore"
+      ],
+      "properties": {
+        "sistema": {
+          "enum": [
+            "ESENZIONE",
+            "ICD-9-CM",
+            "ICD-10",
+            "ICD-11",
+            "ORPHA",
+            "ALTRO"
+          ]
+        },
+        "valore": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descrizione": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "classificazione": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sistema",
+        "valore"
+      ],
+      "properties": {
+        "sistema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valore": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "contatto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tipo",
+        "valore",
+        "pubblico"
+      ],
+      "properties": {
+        "tipo": {
+          "enum": [
+            "email",
+            "telefono",
+            "pec",
+            "sede",
+            "url",
+            "altro"
+          ]
+        },
+        "valore": {
+          "type": "string",
+          "minLength": 1
+        },
+        "etichetta": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pubblico": {
+          "type": "boolean"
+        }
+      }
+    },
+    "medico": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nome",
+        "relazione_con_patologia",
+        "contatti"
+      ],
+      "properties": {
+        "nome": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ruolo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relazione_con_patologia": {
+          "enum": [
+            "confermata",
+            "pubblicato_a_livello_uo",
+            "da_confermare"
+          ]
+        },
+        "contatti": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contatto"
+          }
+        }
+      }
+    },
+    "unita_operativa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nome",
+        "relazione_con_patologia",
+        "medici_certificatori",
+        "contatti"
+      ],
+      "properties": {
+        "codice": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nome": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relazione_con_patologia": {
+          "enum": [
+            "confermata",
+            "da_confermare"
+          ]
+        },
+        "medici_certificatori": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/medico"
+          }
+        },
+        "contatti": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contatto"
+          }
+        }
+      }
+    },
+    "percorso_accesso": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "istruzioni",
+        "prenotazione",
+        "documenti_richiesti",
+        "note"
+      ],
+      "properties": {
+        "istruzioni": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prenotazione": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "documenti_richiesti": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "fonte": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "titolo",
+        "url",
+        "tipo",
+        "data_verifica"
+      ],
+      "properties": {
+        "titolo": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "tipo": {
+          "enum": [
+            "ente",
+            "ministero_iss",
+            "orphanet",
+            "dataset_ufficiale",
+            "altro"
+          ]
+        },
+        "data_verifica": {
+          "type": "string",
+          "format": "date"
+        },
+        "nota": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stato",
+        "versione",
+        "responsabile_corrente",
+        "pubblicabile"
+      ],
+      "properties": {
+        "stato": {
+          "enum": [
+            "bozza",
+            "in_validazione_formale",
+            "da_autorizzare",
+            "pubblicata",
+            "ritirata"
+          ]
+        },
+        "versione": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "responsabile_corrente": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pubblicabile": {
+          "type": "boolean"
+        },
+        "nota_interna": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "qualita": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stato_completezza",
+        "campi_da_confermare",
+        "ultima_verifica"
+      ],
+      "properties": {
+        "stato_completezza": {
+          "enum": [
+            "completa",
+            "incompleta",
+            "da_verificare"
+          ]
+        },
+        "campi_da_confermare": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "ultima_verifica": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  }
+}

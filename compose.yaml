@@ -1,0 +1,144 @@
+name: arianna
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: Arianna
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY}
+      APP_URL: http://localhost
+      LOG_CHANNEL: stderr
+      SCOUT_DRIVER: meilisearch
+      SCOUT_QUEUE: false
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_KEY: ${MEILI_MASTER_KEY}
+      WHISPER_URL: http://whisper:8080
+      DEMO_ADMIN_EMAIL: ${DEMO_ADMIN_EMAIL:-}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-}
+      DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD:-}
+      DEMO_EDITOR_EMAIL: ${DEMO_EDITOR_EMAIL:-}
+      DEMO_VALIDATOR_EMAIL: ${DEMO_VALIDATOR_EMAIL:-}
+      DEMO_DIRECTOR_EMAIL: ${DEMO_DIRECTOR_EMAIL:-}
+    expose:
+      - "8000"
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+      whisper:
+        condition: service_healthy
+    command: ["sh", "-lc", "php artisan migrate --force && php artisan db:seed --class=DemoUsersSeeder --force && php artisan serve --host=0.0.0.0 --port=8000"]
+    mem_limit: 1g
+    cpus: 1.0
+    security_opt:
+      - no-new-privileges:true
+
+  whisper-model:
+    image: ghcr.io/ggml-org/whisper.cpp@sha256:e75f3030c4c2df0d9e5a5eca5259d470c646de5cbe110dc38ae83e3058883f76
+    restart: "no"
+    command: ["test -f /models/ggml-base.bin || ./models/download-ggml-model.sh base /models"]
+    volumes:
+      - whisper_models:/models
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+
+  whisper:
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile
+    image: arianna-whisper:1d549b3
+    restart: unless-stopped
+    command: ["whisper-server --host 0.0.0.0 --port 8080 --model /models/ggml-base.bin --language it --threads 4 --no-timestamps --no-gpu --no-flash-attn --convert --tmp-dir /tmp"]
+    expose:
+      - "8080"
+    volumes:
+      - whisper_models:/models:ro
+    networks:
+      - backend
+    depends_on:
+      whisper-model:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    mem_limit: 2g
+    cpus: 4.0
+    security_opt:
+      - no-new-privileges:true
+
+  postgres:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 2g
+    cpus: 1.5
+    security_opt:
+      - no-new-privileges:true
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.53.1
+    restart: unless-stopped
+    environment:
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_DB_PATH: /meili_data/data.ms
+      MEILI_DUMP_DIR: /meili_data/dumps
+      MEILI_SNAPSHOT_DIR: /meili_data/snapshots
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 3g
+    cpus: 2.0
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  backend:
+    name: arianna_backend
+
+volumes:
+  postgres_data:
+    name: arianna_postgres_data
+  meilisearch_data:
+    name: arianna_meilisearch_data
+  whisper_models:
+    name: arianna_whisper_models
+

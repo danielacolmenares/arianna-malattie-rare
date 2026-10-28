@@ -1,0 +1,100 @@
+{
+  "$schema": "./scheda_patologia.schema.json",
+  "schema_version": "0.1.0",
+  "id": "PAT-RB0070",
+  "slug": "sindrome-del-nevo-basocellulare",
+  "nome_ufficiale": "Sindrome del nevo basocellulare",
+  "descrizione_breve": null,
+  "sinonimi": [
+    {
+      "valore": "Sindrome di Gorlin-Goltz",
+      "tipo": "denominazione_alternativa",
+      "fonte": "Portale nazionale delle Malattie Rare",
+      "verificato": true
+    },
+    {
+      "valore": "NBCCS",
+      "tipo": "acronimo",
+      "fonte": "Portale nazionale delle Malattie Rare",
+      "verificato": true
+    }
+  ],
+  "termini_colloquiali": [],
+  "parole_chiave": [],
+  "codici": [
+    {
+      "sistema": "ESENZIONE",
+      "valore": "RB0070",
+      "descrizione": null
+    },
+    {
+      "sistema": "ICD-9-CM",
+      "valore": "173.90",
+      "descrizione": null
+    },
+    {
+      "sistema": "ICD-10",
+      "valore": "C44.9",
+      "descrizione": null
+    },
+    {
+      "sistema": "ICD-11",
+      "valore": "LD2D.4",
+      "descrizione": null
+    },
+    {
+      "sistema": "ORPHA",
+      "valore": "377",
+      "descrizione": null
+    }
+  ],
+  "classificazioni": [
+    {
+      "sistema": "Categoria pubblica",
+      "valore": "Tumori"
+    }
+  ],
+  "unita_operative": [
+    {
+      "codice": null,
+      "nome": "UOSD Dermatologia",
+      "relazione_con_patologia": "confermata",
+      "medici_certificatori": [
+        {
+          "nome": "Francesca Romano",
+          "ruolo": "Medico certificatore",
+          "relazione_con_patologia": "pubblicato_a_livello_uo",
+          "contatti": []
+        }
+      ],
+      "contatti": []
+    }
+  ],
+  "percorso_accesso": null,
+  "fonti": [
+    {
+      "titolo": "Portale nazionale delle Malattie Rare - Sindrome del nevo basocellulare",
+      "url": "https://www.malattierare.gov.it/malattie/dettaglio/236",
+      "tipo": "ministero_iss",
+      "data_verifica": "2026-09-10",
+      "nota": null
+    }
+  ],
+  "workflow": {
+    "stato": "bozza",
+    "versione": 1,
+    "responsabile_corrente": "Redazione demo",
+    "pubblicabile": false,
+    "nota_interna": "Scheda campione per il prototipo."
+  },
+  "qualita": {
+    "stato_completezza": "incompleta",
+    "campi_da_confermare": [
+      "descrizione_breve",
+      "contatti diretti",
+      "associazione puntuale medico-patologia",
+      "percorso di accesso"
+    ],
+    "ultima_verifica": "2026-09-10"
+  }
+}

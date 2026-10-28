@@ -1,0 +1,78 @@
+{
+  "$schema": "./scheda_patologia.schema.json",
+  "schema_version": "0.1.0",
+  "id": "PAT-RC0020",
+  "slug": "sindrome-di-kallmann",
+  "nome_ufficiale": "Sindrome di Kallmann",
+  "descrizione_breve": null,
+  "sinonimi": [
+    {
+      "valore": "Ipogonadismo con anosmia",
+      "tipo": "denominazione_alternativa",
+      "fonte": "Portale nazionale delle Malattie Rare",
+      "verificato": true
+    }
+  ],
+  "termini_colloquiali": [],
+  "parole_chiave": [],
+  "codici": [
+    {
+      "sistema": "ESENZIONE",
+      "valore": "RC0020",
+      "descrizione": null
+    },
+    {
+      "sistema": "ICD-10",
+      "valore": "E23.0",
+      "descrizione": null
+    },
+    {
+      "sistema": "ORPHA",
+      "valore": "478",
+      "descrizione": null
+    }
+  ],
+  "classificazioni": [
+    {
+      "sistema": "Categoria pubblica",
+      "valore": "Malattie endocrine"
+    }
+  ],
+  "unita_operative": [
+    {
+      "codice": null,
+      "nome": "UOC Endocrinologia",
+      "relazione_con_patologia": "confermata",
+      "medici_certificatori": [],
+      "contatti": []
+    }
+  ],
+  "percorso_accesso": null,
+  "fonti": [
+    {
+      "titolo": "Portale nazionale delle Malattie Rare - Sindrome di Kallmann",
+      "url": "https://www.malattierare.gov.it/malattie/dettaglio/3574",
+      "tipo": "ministero_iss",
+      "data_verifica": "2026-09-10",
+      "nota": null
+    }
+  ],
+  "workflow": {
+    "stato": "bozza",
+    "versione": 1,
+    "responsabile_corrente": "Redazione demo",
+    "pubblicabile": false,
+    "nota_interna": "Scheda campione per il prototipo."
+  },
+  "qualita": {
+    "stato_completezza": "incompleta",
+    "campi_da_confermare": [
+      "descrizione_breve",
+      "sinonimi ulteriori",
+      "medici certificatori associati alla patologia",
+      "contatti diretti",
+      "percorso di accesso"
+    ],
+    "ultima_verifica": "2026-09-10"
+  }
+}
